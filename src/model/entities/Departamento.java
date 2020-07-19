@@ -13,7 +13,7 @@ public class Departamento implements Serializable {
 	
 	public Departamento(Integer id, String nome) {
 		this.id = id;
-		this.nome = nome;
+		this.nome = nome; //
 	}
 
 	public Integer getId() {
