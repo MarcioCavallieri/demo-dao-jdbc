@@ -49,5 +49,9 @@ public class Program {
 		vendedor.setNome("boladao 123");
 		vendedor.setEmail("12234556");
 		vendDao.Atualizar(vendedor);
+		
+		System.out.println("=== Teste 6: Deleção ===");
+		vendedor = vendDao.ObterPeloId(9);
+		vendDao.DeletarPeloId(vendedor.getId());
 	}
 }

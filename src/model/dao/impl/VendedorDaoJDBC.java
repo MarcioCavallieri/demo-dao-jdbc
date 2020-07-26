@@ -95,8 +95,25 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 	@Override
 	public void DeletarPeloId(Integer id) {
-		// TODO Auto-generated method stub
-
+		PreparedStatement preparedStatement = null; 
+		ResultSet resultSet = null;
+				
+		try {
+			preparedStatement = conexao.prepareStatement(
+					"DELETE FROM vendedor " + 
+					"WHERE " +
+					"  (id = ?)", 
+					Statement.RETURN_GENERATED_KEYS);
+			
+			preparedStatement.setInt(1, id);
+			
+			preparedStatement.executeUpdate();
+		} catch (SQLException e){
+			throw new DBException(e.getMessage());
+		}finally {
+			DB.fecharPreparedStatement(preparedStatement);
+			DB.fecharResultSet(resultSet);
+		}
 	}
 
 	@Override
