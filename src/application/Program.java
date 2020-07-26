@@ -43,6 +43,11 @@ public class Program {
 		vendedor = new Vendedor(null, "thaina", "thaina@thaina.br", new Date(), 8000.0, departamento);
 		vendDao.Inserir(vendedor);
 		System.out.println("Inserido. novo ID: " + vendedor.getId());
+		
+		System.out.println("=== Teste 5: Atualização ===");
+		vendedor = vendDao.ObterPeloId(9);
+		vendedor.setNome("boladao 123");
+		vendedor.setEmail("12234556");
+		vendDao.Atualizar(vendedor);
 	}
-
 }
