@@ -2,6 +2,7 @@ package model.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,8 +25,43 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 	@Override
 	public void Inserir(Vendedor v) {
-		// TODO Auto-generated method stub
-
+		PreparedStatement preparedStatement = null; 
+		ResultSet resultSet = null;
+				
+		try {
+			preparedStatement = conexao.prepareStatement(
+					"INSERT INTO vendedor " + 
+					"  (nome, email, data_nascimento, salario_base, departamento_id) " +
+					"VALUES " +
+					"  (?, ?, ?, ?, ?)", 
+					Statement.RETURN_GENERATED_KEYS);
+			
+			preparedStatement.setString(1, v.getNome());
+			preparedStatement.setString(2, v.getEmail());
+			preparedStatement.setDate(3, new java.sql.Date(v.getDataNascimento().getTime()));
+			preparedStatement.setDouble(4, v.getSalarioBase());
+			preparedStatement.setInt(5, v.getDepartamento().getId());
+			
+			int linhas = preparedStatement.executeUpdate();
+			
+			if (linhas > 0) {
+				resultSet = preparedStatement.getGeneratedKeys();
+				
+				if (resultSet.next()) {
+					int id = resultSet.getInt(1);
+					v.setId(id);
+				}
+			}
+			else
+			{
+				throw new DBException("Nenhuma linha afetada");
+			}
+		} catch (SQLException e){
+			throw new DBException(e.getMessage());
+		}finally {
+			DB.fecharPreparedStatement(preparedStatement);
+			DB.fecharResultSet(resultSet);
+		}
 	}
 
 	@Override

@@ -38,6 +38,11 @@ public class Program {
 		for (Vendedor v : listaVendedor) {
 			System.out.println(v);
 		}
+		
+		System.out.println("=== Teste 4: Inserção ===");
+		vendedor = new Vendedor(null, "thaina", "thaina@thaina.br", new Date(), 8000.0, departamento);
+		vendDao.Inserir(vendedor);
+		System.out.println("Inserido. novo ID: " + vendedor.getId());
 	}
 
 }
