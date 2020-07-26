@@ -31,6 +31,13 @@ public class Program {
 		for (Vendedor v : listaVendedor) {
 			System.out.println(v);
 		}
+		
+		System.out.println("=== Teste 3: obterPorDepartamento ===");
+		listaVendedor = vendDao.ObterTodos();
+		
+		for (Vendedor v : listaVendedor) {
+			System.out.println(v);
+		}
 	}
 
 }

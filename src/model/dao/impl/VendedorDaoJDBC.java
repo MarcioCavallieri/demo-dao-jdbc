@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DBException;
@@ -96,8 +98,42 @@ public class VendedorDaoJDBC implements VendedorDao {
 
 	@Override
 	public List<Vendedor> ObterTodos() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement preparedStatement = null; 
+		ResultSet resultSet = null;
+				
+		try {
+			preparedStatement = conexao.prepareStatement(
+					"SELECT " + 
+					"  V.*, " +
+					"  D.nome AS departamento_nome" +
+					"FROM " +
+					"  vendedor AS V" +
+					"INNER JOIN Departamento AS D" +
+					"  ON (V.departamento_id = D.id)");
+			
+			resultSet = preparedStatement.executeQuery();
+		
+			List<Vendedor> listaVendedor = new ArrayList<Vendedor>();
+			Map<Integer, Departamento> m = new HashMap<Integer, Departamento>();
+			
+			while (resultSet.next()) {
+				Departamento dep = m.get(resultSet.getInt("departamento_id"));
+				
+				if (dep == null) {
+					dep = new Departamento(resultSet.getInt("departamento_id"), resultSet.getString("departamento_nome"));
+					m.put(resultSet.getInt("departamento_id"), dep);
+				}
+						
+				listaVendedor.add(instanciarVendedor(resultSet, dep));
+			}
+			
+			return listaVendedor;
+		} catch (SQLException e){
+			throw new DBException(e.getMessage());
+		}finally {
+			DB.fecharPreparedStatement(preparedStatement);
+			DB.fecharResultSet(resultSet);
+		}
 	}
 
 	@Override
@@ -126,11 +162,9 @@ public class VendedorDaoJDBC implements VendedorDao {
 			
 			while (resultSet.next()) {
 				listaVendedor.add(instanciarVendedor(resultSet, d));
-				
-				return listaVendedor;
 			}
 			
-			return null;
+			return listaVendedor;
 		} catch (SQLException e){
 			throw new DBException(e.getMessage());
 		}finally {
