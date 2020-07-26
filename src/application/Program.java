@@ -1,6 +1,8 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import model.dao.DaoFabrica;
 import model.dao.VendedorDao;
@@ -20,6 +22,15 @@ public class Program {
 		System.out.println("=== Teste 1: obterPorId ===");
 		vendedor = vendDao.ObterPeloId(3);
 		System.out.println(vendedor);
+		
+		System.out.println("=== Teste 2: obterPorDepartamento ===");
+		List<Vendedor> listaVendedor = new ArrayList<Vendedor>();
+		
+		listaVendedor = vendDao.ObterPorDepartamento(departamento);
+		
+		for (Vendedor v : listaVendedor) {
+			System.out.println(v);
+		}
 	}
 
 }

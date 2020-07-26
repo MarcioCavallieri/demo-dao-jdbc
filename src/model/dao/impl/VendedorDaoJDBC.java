@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import db.DB;
@@ -54,11 +55,11 @@ public class VendedorDaoJDBC implements VendedorDao {
 					"WHERE" +
 					"  (V.id = ?)");
 			
-			preparedStatement.setInt(0, id);
+			preparedStatement.setInt(1, id);
 			resultSet = preparedStatement.executeQuery();
 			
 			if (resultSet.next()) {
-				Departamento dep = instanciarDeparamento(resultSet);
+				Departamento dep = instanciarDepartamento(resultSet);
 				Vendedor vend = instanciarVendedor(resultSet, dep);
 				
 				return vend;
@@ -85,7 +86,7 @@ public class VendedorDaoJDBC implements VendedorDao {
 		return vend;
 	}
 
-	private Departamento instanciarDeparamento(ResultSet resultSet) throws SQLException {
+	private Departamento instanciarDepartamento(ResultSet resultSet) throws SQLException {
 		Departamento dep = new Departamento();
 		dep.setId(resultSet.getInt("departamento_id"));
 		dep.setNome(resultSet.getString("departamento_nome"));
@@ -97,6 +98,45 @@ public class VendedorDaoJDBC implements VendedorDao {
 	public List<Vendedor> ObterTodos() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Vendedor> ObterPorDepartamento(Departamento d) {
+		PreparedStatement preparedStatement = null; 
+		ResultSet resultSet = null;
+				
+		try {
+			preparedStatement = conexao.prepareStatement(
+					"SELECT " + 
+					"  V.*, " +
+					"  D.nome AS departamento_nome" +
+					"FROM " +
+					"  vendedor AS V" +
+					"INNER JOIN Departamento AS D" +
+					"  ON (V.departamento_id = D.id)" +
+					"WHERE" +
+					"  (V.departamento_id = ?)" +
+					"ORDER BY" +
+					"  V.nome");
+			
+			preparedStatement.setInt(1, d.getId());
+			resultSet = preparedStatement.executeQuery();
+		
+			List<Vendedor> listaVendedor = new ArrayList<Vendedor>();
+			
+			while (resultSet.next()) {
+				listaVendedor.add(instanciarVendedor(resultSet, d));
+				
+				return listaVendedor;
+			}
+			
+			return null;
+		} catch (SQLException e){
+			throw new DBException(e.getMessage());
+		}finally {
+			DB.fecharPreparedStatement(preparedStatement);
+			DB.fecharResultSet(resultSet);
+		}
 	}
 
 }
